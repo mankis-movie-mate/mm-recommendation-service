@@ -24,7 +24,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Check reusable workflow output
+      - name: Check reusable workflow outputs
         run: |
           echo "Reusable DOCKERHUB_USER: ${{ needs.build.outputs.dockerUser }}"
           echo "Reusable DOCKERHUB_PASSWORD: ${{ needs.build.outputs.dockerPassword }}"
