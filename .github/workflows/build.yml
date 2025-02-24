@@ -28,7 +28,7 @@ jobs:
 
       - name: Check reusable workflow outputs
         run: |
-          echo "Reusable output DOCKERHUB_USER: ${{ needs.build.outputs.dockerUser }}"
+          echo "Reusable DOCKERHUB_USER: ${{ needs.build.outputs.dockerUser }}"
 
 #      - name: Build and push Docker image with Jib
 #        env:
