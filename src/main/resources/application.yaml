@@ -1,0 +1,7 @@
+ktor:
+    application:
+        modules:
+            - kz.mm.ApplicationKt.module
+    deployment:
+        port: "$MOVIE_MATE_RECOMMENDATION_SERVICE_PORT:7020"
+
