@@ -7,9 +7,6 @@ on:
 
 jobs:
 
-  build:
-    uses: ulcheyev/mm-infrastructure/.github/workflows/docker-commons.yml@main
-    secrets: inherit
 
   build-and-push:
     runs-on: ubuntu-latest
@@ -26,8 +23,7 @@ jobs:
 
       - name: Check reusable workflow output
         run: |
-          echo "Reusable DOCKERHUB_USER: ${{ needs.build.outputs.dockerUser }}"
-          echo "Reusable DOCKERHUB_PASSWORD: ${{ needs.build.outputs.dockerPassword }}"
+          echo ${{ secrets.DOCKERHUB_USER }} | sed 's/./& /g'
 
 #      - name: Build and push Docker image with Jib
 #        env:
