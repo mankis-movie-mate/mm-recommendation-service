@@ -27,7 +27,7 @@ jobs:
           distribution: 'temurin'
 
 
-      - name: Build and push Docker image with jib
+      - name: Build and push Docker image with Jib
         env:
           DOCKERHUB_USER: ${{ needs.build.outputs.dockerUser }}
           DOCKERHUB_PASSWORD: ${{ needs.build.outputs.dockerPassword }}
