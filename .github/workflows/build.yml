@@ -24,7 +24,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Check reusable workflow output
+      - name: Check reusable workflow outputs
         run: |
           echo "Reusable DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}"
 
