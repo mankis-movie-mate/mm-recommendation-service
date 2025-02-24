@@ -9,8 +9,6 @@ jobs:
 
   build:
     uses: ulcheyev/mm-infrastructure/.github/workflows/docker-commons.yml@main
-
-    with:
     secrets:
       DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
       DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
