@@ -32,7 +32,7 @@ jobs:
           DOCKERHUB_USER: ${{ needs.build.outputs.dockerUser }}
           DOCKERHUB_PASSWORD: ${{ needs.build.outputs.dockerPassword }}
         run: |
-          mvn clean verify jib:dockerBuild \
+          mvn clean verify jib:build \
             -Djib.to.image=${{ secrets.DOCKERHUB_USER }}/mm-recommendation-service:${{ github.sha }} \
             -Djib.to.auth.username=${{ secrets.DOCKERHUB_USER }} \
             -Djib.to.auth.password=${{ secrets.DOCKERHUB_PASSWORD }}
