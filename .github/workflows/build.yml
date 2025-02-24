@@ -26,16 +26,19 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-
-      - name: Build and push Docker image with Jib
-        env:
-          DOCKERHUB_USER: ${{ needs.build.outputs.dockerUser }}
-          DOCKERHUB_PASSWORD: ${{ needs.build.outputs.dockerPassword }}
+      - name: Check reusable workflow outputs
         run: |
-          mvn clean verify jib:build \
-            -Djib.to.image=${{ secrets.DOCKERHUB_USER }}/mm-recommendation-service:${{ github.sha }} \
-            -Djib.to.auth.username=${{ secrets.DOCKERHUB_USER }} \
-            -Djib.to.auth.password=${{ secrets.DOCKERHUB_PASSWORD }}
+          echo "Reusable output DOCKERHUB_USER: ${{ needs.build.outputs.dockerUser }}"
+
+#      - name: Build and push Docker image with Jib
+#        env:
+#          DOCKERHUB_USER: ${{ needs.build.outputs.dockerUser }}
+#          DOCKERHUB_PASSWORD: ${{ needs.build.outputs.dockerPassword }}
+#        run: |
+#          mvn clean verify jib:build \
+#            -Djib.to.image=${{ secrets.DOCKERHUB_USER }}/mm-recommendation-service:${{ github.sha }} \
+#            -Djib.to.auth.username=${{ secrets.DOCKERHUB_USER }} \
+#            -Djib.to.auth.password=${{ secrets.DOCKERHUB_PASSWORD }}
 
 #      - name: Trigger re-deploy
 #        uses: peter-evans/repository-dispatch@v1
