@@ -6,6 +6,7 @@ on:
       - dev/release-test
 
 jobs:
+
   build:
     uses: ulcheyev/mm-infrastructure/.github/workflows/docker-commons.yml@main
 
@@ -30,8 +31,8 @@ jobs:
 
       - name: Build and push Docker image with jib
         env:
-          DOCKERHUB_USER: ${{ jobs.build.outputs.dockerUser }}
-          DOCKERHUB_PASSWORD: ${{ jobs.build.outputs.dockerPassword }}
+          DOCKERHUB_USER: ${{ needs.build.outputs.dockerUser }}
+          DOCKERHUB_PASSWORD: ${{ needs.build.outputs.dockerPassword }}
         run: |
           mvn clean verify jib:dockerBuild \
             -Djib.to.image=${{ secrets.DOCKERHUB_USER }}/mm-recommendation-service:${{ github.sha }} \
