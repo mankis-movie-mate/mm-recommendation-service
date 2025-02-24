@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     uses: ulcheyev/mm-infrastructure/.github/workflows/docker-commons.yml@main
+
     with:
     secrets:
       DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
@@ -27,7 +28,7 @@ jobs:
           distribution: 'temurin'
 
 
-      - name: Build and push Docker image with Jib
+      - name: Build and push Docker image with jib
         env:
           DOCKERHUB_USER: ${{ jobs.build.outputs.dockerUser }}
           DOCKERHUB_PASSWORD: ${{ jobs.build.outputs.dockerPassword }}
