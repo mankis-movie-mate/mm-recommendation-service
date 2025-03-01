@@ -31,7 +31,7 @@ jobs:
 #            -Djib.to.auth.username=${{ secrets.DOCKERHUB_USER }} \
 #            -Djib.to.auth.password=${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Trigger re-deploy
+      - name: Trigger redeploy
         uses: peter-evans/repository-dispatch@v1
         with:
           repository: mankis-movie-mate/mm-infrastructure
