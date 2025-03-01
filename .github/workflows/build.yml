@@ -37,4 +37,4 @@ jobs:
           token: ${{ secrets.AGGREGATOR_TOKEN }}
           repository: ulcheyev/mm-infrastructure
           event-type: recommendation-service-builded
-          client-payload: '{"service": "mm-recommendation-service", "tag": "${{ github.sha }}"}'
+          client-payload: '{"service": "mm-recommendation-service", "tag": "latest"}'
