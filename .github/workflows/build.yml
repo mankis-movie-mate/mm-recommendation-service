@@ -21,15 +21,15 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Build and push Docker image with Jib
-        env:
-          DOCKERHUB_USER: ${{ needs.build.outputs.dockerUser }}
-          DOCKERHUB_PASSWORD: ${{ needs.build.outputs.dockerPassword }}
-        run: |
-          mvn clean verify jib:build \
-            -Djib.to.image=${{ secrets.DOCKERHUB_USER }}/mm-recommendation-service:latest \
-            -Djib.to.auth.username=${{ secrets.DOCKERHUB_USER }} \
-            -Djib.to.auth.password=${{ secrets.DOCKERHUB_PASSWORD }}
+#      - name: Build and push Docker image with Jib
+#        env:
+#          DOCKERHUB_USER: ${{ needs.build.outputs.dockerUser }}
+#          DOCKERHUB_PASSWORD: ${{ needs.build.outputs.dockerPassword }}
+#        run: |
+#          mvn clean verify jib:build \
+#            -Djib.to.image=${{ secrets.DOCKERHUB_USER }}/mm-recommendation-service:latest \
+#            -Djib.to.auth.username=${{ secrets.DOCKERHUB_USER }} \
+#            -Djib.to.auth.password=${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Trigger re-deploy
         uses: peter-evans/repository-dispatch@v1
@@ -37,4 +37,4 @@ jobs:
           repository: mankis-movie-mate/mm-infrastructure
           event-type: recommendation-service-builded
           client-payload: '{"service": "mm-recommendation-service", "tag": "latest"}'
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.MM_TOKEN }}
