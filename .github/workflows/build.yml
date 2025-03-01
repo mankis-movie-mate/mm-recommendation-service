@@ -34,7 +34,7 @@ jobs:
       - name: Trigger re-deploy
         uses: peter-evans/repository-dispatch@v1
         with:
-          repository: ulcheyev/mm-infrastructure
+          repository: mankis-movie-mate/mm-infrastructure
           event-type: recommendation-service-builded
           client-payload: '{"service": "mm-recommendation-service", "tag": "latest"}'
           token: ${{ secrets.GITHUB_TOKEN }}
