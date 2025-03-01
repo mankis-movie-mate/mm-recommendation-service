@@ -37,3 +37,4 @@ jobs:
           repository: ulcheyev/mm-infrastructure
           event-type: recommendation-service-builded
           client-payload: '{"service": "mm-recommendation-service", "tag": "latest"}'
+          token: ${{ secrets.GITHUB_TOKEN }}
