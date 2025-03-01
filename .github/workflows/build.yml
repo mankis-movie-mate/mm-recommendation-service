@@ -27,7 +27,7 @@ jobs:
           DOCKERHUB_PASSWORD: ${{ needs.build.outputs.dockerPassword }}
         run: |
           mvn clean verify jib:build \
-            -Djib.to.image=${{ secrets.DOCKERHUB_USER }}/mm-recommendation-service:${{ github.sha }} \
+            -Djib.to.image=${{ secrets.DOCKERHUB_USER }}/mm-recommendation-service:latest \
             -Djib.to.auth.username=${{ secrets.DOCKERHUB_USER }} \
             -Djib.to.auth.password=${{ secrets.DOCKERHUB_PASSWORD }}
 
