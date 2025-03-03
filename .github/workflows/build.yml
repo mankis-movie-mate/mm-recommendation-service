@@ -29,13 +29,12 @@ jobs:
           mvn clean verify jib:build \
             -Djib.to.image=${{ secrets.DOCKERHUB_USER }}/mm-recommendation-service:latest \
             -Djib.to.auth.username=${{ secrets.DOCKERHUB_USER }} \
-            -Djib.to.auth.password=${{ secrets.DOCKERHUB_PASSWORD }} \
-            -DskipTests
+            -Djib.to.auth.password=${{ secrets.DOCKERHUB_PASSWORD }}
 
-#      - name: Trigger redeploy
-#        uses: peter-evans/repository-dispatch@v1
-#        with:
-#          repository: mankis-movie-mate/mm-infrastructure
-#          event-type: recommendation-service-builded
-#          client-payload: '{"service": "mm-recommendation-service", "tag": "latest"}'
-#          token: ${{ secrets.MM_TOKEN }}
+      - name: Trigger redeploy
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          repository: mankis-movie-mate/mm-infrastructure
+          event-type: recommendation-service-builded
+          client-payload: '{"service": "mm-recommendation-service", "tag": "latest"}'
+          token: ${{ secrets.MM_TOKEN }}

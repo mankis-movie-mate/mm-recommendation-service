@@ -1,31 +1,7 @@
-app:
-  name: mm-recommendation-service
-
 ktor:
-  application:
-    modules:
-      - kz.mm.ApplicationKt.module
-  deployment:
-    port: "$MOVIE_MATE_RECOMMENDATION_SERVICE_PORT:8080"
-    rootPath: "$MOVIE_MATE_RECOMMENDATION_SERVICE_ROOT_PATH:"
-  allowedHosts: "$MOVIE_MATE_RECOMMENDATION_SERVICE_ALLOWED_HOSTS:localhost,0.0.0.0,127.0.0.1"
+    application:
+        modules:
+            - kz.mm.ApplicationKt.module
+    deployment:
+        port: "$MOVIE_MATE_RECOMMENDATION_SERVICE_PORT:7020"
 
-
-cloud:
-  health-path: "$MOVIE_MATE_RECOMMENDATION_SERVICE_HEALTH_PATH:/healthz"
-
-security:
-  excluded-paths: "/metrics,/docs,/dapr"
-
-consul:
-  host: "$MOVIE_MATE_DISCOVERY_SERVER_HOST:consul"
-  port: "$MOVIE_MATE_DISCOVERY_SERVER_PORT:8500"
-  registrationPort: "$MOVIE_MATE_RECOMMENDATION_SERVICE_REGISTRATION_PORT:3500"
-  register: "$MOVIE_MATE_DISCOVERY_REGISTER:true"
-  scheme: "http"
-  health-check-interval: "10s"
-
-neo4j:
-  uri: "$MOVIE_MATE_NEO4J_URI"
-  user: "$MOVIE_MATE_NEO4J_USER"
-  password: "$MOVIE_MATE_NEO4J_PASSWORD"
