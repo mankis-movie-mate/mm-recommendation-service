@@ -1,14 +1,48 @@
-# Compiled class file
-*.class
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!src/main/**/target/
+!src/test/**/target/
 
-# Log file
-*.log
+### IntelliJ IDEA ###
+.idea/
+.idea/modules.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/libraries/
+*.iws
+*.iml
+*.ipr
 
-# BlueJ files
-*.ctxt
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!src/main/**/build/
+!src/test/**/build/
+
+
+tomcat.*/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
+
+#env
+.env
 
 # Package Files #
 *.jar
@@ -27,7 +61,5 @@ replay_pid*
 
 #idea
 .idea
-tomcat.8080
 
-#envs
-.env
+
