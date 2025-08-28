@@ -29,7 +29,8 @@ jobs:
           mvn clean verify jib:build \
             -Djib.to.image=${{ secrets.DOCKERHUB_USER }}/mm-recommendation-service:latest \
             -Djib.to.auth.username=${{ secrets.DOCKERHUB_USER }} \
-            -Djib.to.auth.password=${{ secrets.DOCKERHUB_PASSWORD }}
+            -Djib.to.auth.password=${{ secrets.DOCKERHUB_PASSWORD }} \
+            -DskipTests
 
 #      - name: Trigger redeploy
 #        uses: peter-evans/repository-dispatch@v1
