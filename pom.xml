@@ -1,57 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Project Identification -->
     <groupId>kz.mm</groupId>
     <artifactId>mm-recommendation-service</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>mm-recommendation-service</name>
+    <description>Ktor-based movie recommendation microservice</description>
+    <url>https://github.com/manki1337/mm-recommendation-service</url>
 
-    <!-- Properties: All versions and key values -->
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <properties>
-        <!-- Encoding & Code Style -->
+        <!-- General Build -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
-        <kotlin.coroutines.version>1.6.4</kotlin.coroutines.version>
-        <!-- Dependency Versions -->
+        <main.class>io.ktor.server.tomcat.jakarta.EngineMain</main.class>
+        <!-- App image -->
+        <jib.image.name>manki1337/mm-recommendation-service</jib.image.name>
+        <jib.image.tag>latest</jib.image.tag>
+        <!-- Libraries -->
         <kotlin_version>2.1.10</kotlin_version>
         <ktor_version>3.0.3</ktor_version>
+        <kotlin.core.version>0.6.0</kotlin.core.version>
+        <kotlinx.version>1.9.0</kotlinx.version>
         <logback_version>1.4.14</logback_version>
         <slf4j_version>2.0.9</slf4j_version>
-
-        <!-- Plugin Versions -->
+        <snakeyaml.version>2.2</snakeyaml.version>
+        <swagger_codegen_version>1.0.57</swagger_codegen_version>
+        <ktor.openapi.version>0.2-beta.20</ktor.openapi.version>
+        <neo4j.version>5.20.0</neo4j.version>
+        <!-- Plugins -->
+        <jib.maven.plugin.version>3.3.1</jib.maven.plugin.version>
         <exec.maven.plugin.version>1.2.1</exec.maven.plugin.version>
         <maven.assembly.plugin.version>2.6</maven.assembly.plugin.version>
-        <jib.maven.plugin.version>3.3.1</jib.maven.plugin.version>
-
-        <!-- Main Application -->
-        <main.class>io.ktor.server.tomcat.jakarta.EngineMain</main.class>
-
-        <!-- Jib Plugin Configuration -->
-        <jib.image.name>manki/mm-recommendation-service</jib.image.name>
-        <jib.image.tag>latest</jib.image.tag>
-        <!-- Default port. Override using -Djib.port=your_port at build time -->
-        <jib.port>7020</jib.port>
     </properties>
 
-    <!-- Repositories -->
-    <repositories>
-        <!-- Add repositories if necessary -->
-    </repositories>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
 
-    <!-- Dependencies -->
+    <developers>
+        <developer>
+            <id>manki1337</id>
+        </developer>
+    </developers>
+
+
     <dependencies>
-        <!-- Ktor Server Dependencies -->
+        <!-- === Ktor Server === -->
         <dependency>
             <groupId>io.ktor</groupId>
             <artifactId>ktor-server-core-jvm</artifactId>
+            <version>${ktor_version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-server-cors-jvm</artifactId>
             <version>${ktor_version}</version>
         </dependency>
         <dependency>
@@ -65,7 +84,41 @@
             <version>${ktor_version}</version>
         </dependency>
 
-        <!-- Logging Dependencies -->
+        <!-- === Ktor Client === -->
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-client-core-jvm</artifactId>
+            <version>${ktor_version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-client-cio-jvm</artifactId>
+            <version>${ktor_version}</version>
+        </dependency>
+
+        <!-- === Serialization, Negotiation === -->
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-io-core-jvm</artifactId>
+            <version>${kotlin.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-client-content-negotiation-jvm</artifactId>
+            <version>${ktor_version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-server-content-negotiation-jvm</artifactId>
+            <version>${ktor_version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-serialization-kotlinx-json-jvm</artifactId>
+            <version>${ktor_version}</version>
+        </dependency>
+
+        <!-- === Logging === -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -77,13 +130,7 @@
             <version>${slf4j_version}</version>
         </dependency>
 
-        <!-- Test Dependencies -->
-        <dependency>
-            <groupId>io.ktor</groupId>
-            <artifactId>ktor-server-test-host-jvm</artifactId>
-            <version>${ktor_version}</version>
-            <scope>test</scope>
-        </dependency>
+        <!-- === Testing === -->
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test-junit</artifactId>
@@ -91,14 +138,41 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jetbrains.kotlinx</groupId>
-            <artifactId>kotlinx-coroutines-debug</artifactId>
-            <version>${kotlin.coroutines.version}</version>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-server-test-host-jvm</artifactId>
+            <version>${ktor_version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${snakeyaml.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-server-openapi-jvm</artifactId>
+            <version>${ktor_version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ktor</groupId>
+            <artifactId>ktor-server-swagger-jvm</artifactId>
+            <version>${ktor_version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.codegen.v3</groupId>
+            <artifactId>swagger-codegen-generators</artifactId>
+            <version>${swagger_codegen_version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.neo4j.driver</groupId>
+            <artifactId>neo4j-java-driver</artifactId>
+            <version>${neo4j.version}</version>
+        </dependency>
+
     </dependencies>
 
-    <!-- Build Configuration -->
+
     <build>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
         <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
@@ -107,16 +181,12 @@
                 <directory>${project.basedir}/src/main/resources</directory>
             </resource>
         </resources>
-
         <plugins>
-            <!-- Kotlin Maven Plugin -->
+            <!-- Kotlin Compiler Plugin -->
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin_version}</version>
-                <configuration>
-                    <jvmTarget>${kotlin.compiler.jvmTarget}</jvmTarget>
-                </configuration>
                 <executions>
                     <execution>
                         <id>compile</id>
@@ -133,9 +203,22 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <jvmTarget>${kotlin.compiler.jvmTarget}</jvmTarget>
+                    <compilerPlugins>
+                        <plugin>kotlinx-serialization</plugin>
+                    </compilerPlugins>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-maven-serialization</artifactId>
+                        <version>${kotlin_version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
 
-            <!-- Exec Maven Plugin -->
+            <!-- Exec Plugin (run main class locally) -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -152,7 +235,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Jib Maven Plugin for Containerization -->
+            <!-- Jib: container image builds (prod/CI ready) -->
             <plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
@@ -176,17 +259,11 @@
                     </to>
                     <container>
                         <mainClass>${main.class}</mainClass>
-                        <ports>
-                            <port>${jib.port}</port>
-                        </ports>
-                        <environment>
-                            <MOVIE_MATE_RECOMMENDATION_SERVICE_PORT>${jib.port}</MOVIE_MATE_RECOMMENDATION_SERVICE_PORT>
-                        </environment>
                     </container>
                 </configuration>
             </plugin>
 
-            <!-- Maven Assembly Plugin -->
+            <!-- Assembly Plugin: Fat jar for debugging/legacy (not prod) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -214,4 +291,42 @@
             </plugin>
         </plugins>
     </build>
+
+    <!-- Local Docker build profile -->
+    <profiles>
+        <profile>
+            <id>local-docker</id>
+            <activation>
+                <property>
+                    <name>env.LOCAL_BUILD</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.google.cloud.tools</groupId>
+                        <artifactId>jib-maven-plugin</artifactId>
+                        <configuration>
+                            <from>
+                                <image>eclipse-temurin:17-jre</image>
+                                <platforms>
+                                    <platform>
+                                        <architecture>amd64</architecture>
+                                        <os>linux</os>
+                                    </platform>
+                                </platforms>
+                            </from>
+                            <to>
+                                <image>${project.artifactId}:local</image>
+                            </to>
+                            <container>
+                                <mainClass>${main.class}</mainClass>
+                            </container>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
