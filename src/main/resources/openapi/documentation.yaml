@@ -1,0 +1,215 @@
+openapi: "3.1.0"
+info:
+  title: "movie_mate API"
+  description: "movie_mate API"
+  version: "1.0.0"
+servers:
+  - url: "https://movie_mate"
+paths:
+  /:
+    get:
+      description: "Service root endpoint."
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Recommendation Service!"
+  /dapr/activity/sync:
+    post:
+      description: ""
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Invalid payload"
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "OK"
+  /dapr/subscribe:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/DaprSubscription"
+              examples:
+                Example#1:
+                  description: ""
+                  value: [ ]
+  /health:
+    get:
+      description: "Health check endpoint."
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "OK"
+  /me:
+    get:
+      description: "Authenticated user info endpoint."
+      responses:
+        "200":
+          description: "OK <br> You must define this somewhere"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: ""
+  /recommend/{userId}:
+    get:
+      description: ""
+      parameters:
+        - name: "userId"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+        - name: "detailed"
+          in: "query"
+          required: false
+          schema:
+            type: "boolean"
+        - name: "limit"
+          in: "query"
+          required: false
+          schema:
+            type: "integer"
+        - name: "seedCount"
+          in: "query"
+          required: false
+          schema:
+            type: "integer"
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Missing userId"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Recommendation"
+components:
+  schemas:
+    DaprRoutes:
+      type: "object"
+      properties:
+        default:
+          type: "string"
+      required:
+        - "default"
+    DaprSubscription:
+      type: "object"
+      properties:
+        pubsubname:
+          type: "string"
+        topic:
+          type: "string"
+        routes:
+          $ref: "#/components/schemas/DaprRoutes"
+      required:
+        - "pubsubname"
+        - "topic"
+        - "routes"
+    Movie:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        title:
+          type: "string"
+        genres:
+          type: "array"
+          items:
+            type: "string"
+        releaseYear:
+          type: "integer"
+          format: "int32"
+        rating:
+          type: "number"
+          format: "double"
+      required:
+        - "id"
+        - "title"
+        - "genres"
+        - "releaseYear"
+    MovieSimilarityExplanation:
+      type: "object"
+      properties:
+        seedMovieId:
+          type: "string"
+        seedMovieTitle:
+          type: "string"
+        similarity:
+          type: "number"
+          format: "double"
+        activityType:
+          type: "string"
+          enum:
+            - "WATCHLISTED"
+            - "RATED"
+      required:
+        - "seedMovieId"
+        - "similarity"
+        - "activityType"
+    RecommendedMovie:
+      type: "object"
+      properties:
+        movie:
+          $ref: "#/components/schemas/Movie"
+        score:
+          type: "number"
+          format: "double"
+        explanations:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/MovieSimilarityExplanation"
+      required:
+        - "movie"
+        - "score"
+    Recommendation:
+      type: "object"
+      properties:
+        userId:
+          type: "string"
+        recommended:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/RecommendedMovie"
+      required:
+        - "userId"
+        - "recommended"
