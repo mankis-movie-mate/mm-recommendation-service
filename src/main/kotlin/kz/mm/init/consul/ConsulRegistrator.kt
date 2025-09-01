@@ -96,12 +96,19 @@ suspend fun tryRegisterWithConsul(
  * Builds tags for Consul registration, including Traefik tags and metadata.
  */
 fun buildServiceTags(serviceName: String, registrationPort: Int): List<String> = listOf(
+    // Regular router (protected)
     "traefik.enable=true",
-    "traefik.http.routers.$serviceName.rule=PathPrefix(`/$serviceName`)",
+    "traefik.http.routers.$serviceName.rule=PathPrefix(`/$serviceName`) && Method(`GET`, `POST`, `PUT`, `DELETE`, `PATCH`)",
     "traefik.http.routers.$serviceName.middlewares=dapr-rewrite@file,jwt-forwardauth@file",
-    "traefik.http.services.$serviceName.loadbalancer.server.port=$registrationPort"
-)
+    "traefik.http.services.$serviceName.loadbalancer.server.port=$registrationPort",
 
+    // OPTIONS router (unprotected)
+    "traefik.http.routers.${serviceName}-options.rule=PathPrefix(`/$serviceName`) && Method(`OPTIONS`)",
+    "traefik.http.routers.${serviceName}-options.service=$serviceName",
+    "traefik.http.routers.${serviceName}-options.priority=100",
+    "traefik.http.routers.${serviceName}-options.middlewares=dapr-rewrite@file"
+
+)
 /**
  * Determines the service IP to register with Consul.
  * Prefers POD_IP env, falls back to first non-loopback IPv4 address, then 127.0.0.1.
