@@ -24,6 +24,8 @@ consul:
   register: "$MOVIE_MATE_DISCOVERY_REGISTER:true"
   scheme: "http"
   health-check-interval: "10s"
+  traefik:
+    tags: "$MOVIE_MATE_RECOMMENDATION_SERVICE_LB_TAGS:"
 
 neo4j:
   uri: "$MOVIE_MATE_NEO4J_URI"

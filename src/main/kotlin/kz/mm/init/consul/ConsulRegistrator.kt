@@ -130,7 +130,7 @@ fun Application.registerWithConsul() {
 
     val serviceId = "${consulConfig.serviceName}-${System.currentTimeMillis()}"
     val serviceAddress = resolveServiceIp()
-    val tags = buildServiceTags(consulConfig.serviceName, consulConfig.registrationPort)
+    val tags = environment.config.property("consul.traefik.tags").getString().split(',')
     val healthUrl = "${consulConfig.scheme}://$serviceAddress:${consulConfig.appPort}${consulConfig.healthCheckPath}"
 
     val registration = ConsulRegistration(
