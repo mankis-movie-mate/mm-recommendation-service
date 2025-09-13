@@ -6,7 +6,7 @@ import kz.mm.model.RecommendedMovie
 import org.slf4j.LoggerFactory
 
 class DefaultRecommendationService(
-    private val core: RecommendationService, // your current "smart" implementation
+    private val core: RecommendationService,
     private val movieService: MovieService   // must provide top/popular movies
 ) : RecommendationService {
 
@@ -17,10 +17,11 @@ class DefaultRecommendationService(
         userId: String,
         limit: Int,
         seedCount: Int,
-        detailed: Boolean
+        detailed: Boolean,
+        authToken: String
     ): Recommendation {
         log.info("Generating recommendations for userId=$userId, limit=$limit, seedCount=$seedCount, detailed=$detailed")
-        val rec = core.recommendForUser(userId, limit, seedCount, detailed)
+        val rec = core.recommendForUser(userId, limit, seedCount, detailed, authToken)
         log.info("Core recommender produced ${rec.recommended.size} recommendations")
 
         val alreadyRecommended = rec.recommended.map { it.movie.id }.toSet()
@@ -28,7 +29,7 @@ class DefaultRecommendationService(
 
         val paddingMovies = if (missing > 0) {
             log.info("Padding with $missing popular movies")
-            movieService.getTopMovies(limit * 2)
+            movieService.getTop5Movies(authToken)
                 .filter { it.id !in alreadyRecommended }
                 .take(missing)
                 .onEach { movie ->

@@ -1,11 +1,11 @@
 package kz.mm.service
 
 import kz.mm.client.activityService.Activity
-import kz.mm.client.activityService.ActivityService
 import kz.mm.client.movieService.MovieService
 import kz.mm.model.MovieSimilarityExplanation
 import kz.mm.model.Recommendation
 import kz.mm.model.RecommendedMovie
+import kz.mm.repository.ActivityGraphRepository
 import kz.mm.repository.RecommendationRepository
 import org.slf4j.LoggerFactory
 
@@ -16,8 +16,8 @@ import org.slf4j.LoggerFactory
  */
 class Neo4jJAlgorithmRecommendationService(
     private val repo: RecommendationRepository,
-    private val activityService: ActivityService,
     private val movieService: MovieService,
+    private val activityGraphRepository: ActivityGraphRepository,
     private val scoreStrategy: SimilarityAggregationStrategy = AverageSimilarityStrategy
 ) : RecommendationService {
 
@@ -28,7 +28,8 @@ class Neo4jJAlgorithmRecommendationService(
         userId: String,
         limit: Int,
         seedCount: Int,
-        detailed: Boolean
+        detailed: Boolean,
+        authToken: String
     ): Recommendation {
         log.info("SERVICE: Starting recommendation for user=$userId, limit=$limit, seeds=$seedCount, detailed=$detailed")
         val seeds = getSeedActivities(userId, seedCount)
@@ -41,10 +42,10 @@ class Neo4jJAlgorithmRecommendationService(
 
         val recommended = if (!detailed) {
             log.info("SERVICE: Building SIMPLE recommendations for user=$userId")
-            buildSimpleRecommendations(seeds, seen, limit)
+            buildSimpleRecommendations(seeds, seen, limit, authToken)
         } else {
             log.info("SERVICE: Building DETAILED recommendations for user=$userId")
-            buildDetailedRecommendations(seeds, seen, limit)
+            buildDetailedRecommendations(seeds, seen, limit, authToken)
         }
         log.info("SERVICE: Built ${recommended.size} recommendations for user=$userId")
         return Recommendation(userId, recommended)
@@ -54,7 +55,8 @@ class Neo4jJAlgorithmRecommendationService(
     private fun collectCandidates(
         seeds: List<Activity>,
         seen: Set<String>,
-        limit: Int
+        limit: Int,
+        authToken: String
     ): Map<String, MutableList<MovieSimilarityExplanation>> {
         val candidates = mutableMapOf<String, MutableList<MovieSimilarityExplanation>>()
         for (seed in seeds) {
@@ -63,7 +65,7 @@ class Neo4jJAlgorithmRecommendationService(
                     candidates.getOrPut(movieId) { mutableListOf() }.add(
                         MovieSimilarityExplanation(
                             seedMovieId = seed.movieId,
-                            seedMovieTitle = movieService.getMovie(seed.movieId)?.title,
+                            seedMovieTitle = movieService.getMovie(seed.movieId, authToken)?.title,
                             similarity = similarity,
                             activityType = seed.action
                         )
@@ -78,14 +80,15 @@ class Neo4jJAlgorithmRecommendationService(
     private fun buildSimpleRecommendations(
         seeds: List<Activity>,
         seen: Set<String>,
-        limit: Int
+        limit: Int,
+        authToken: String
     ): List<RecommendedMovie> {
-        val candidates = collectCandidates(seeds, seen, limit)
+        val candidates = collectCandidates(seeds, seen, limit, authToken)
         val scored = candidates.entries
             .map { (movieId, explanations) -> movieId to scoreStrategy.aggregate(explanations) }
             .sortedByDescending { it.second }
             .take(limit)
-        val movies = movieService.getMovies(scored.map { it.first }).associateBy { it.id }
+        val movies = movieService.getMovies(scored.map { it.first }, authToken).associateBy { it.id }
         return scored.mapNotNull { (movieId, score) ->
             movies[movieId]?.let { movie ->
                 RecommendedMovie(movie = movie, score = score, explanations = null)
@@ -96,9 +99,10 @@ class Neo4jJAlgorithmRecommendationService(
     private fun buildDetailedRecommendations(
         seeds: List<Activity>,
         seen: Set<String>,
-        limit: Int
+        limit: Int,
+        authToken: String
     ): List<RecommendedMovie> {
-        val candidates = collectCandidates(seeds, seen, limit)
+        val candidates = collectCandidates(seeds, seen, limit, authToken)
         val scored = candidates.entries
             .map { (movieId, explanations) ->
                 val avgSim = if (explanations.isNotEmpty())
@@ -107,7 +111,7 @@ class Neo4jJAlgorithmRecommendationService(
             }
             .sortedByDescending { it.second }
             .take(limit)
-        val movies = movieService.getMovies(scored.map { it.first }).associateBy { it.id }
+        val movies = movieService.getMovies(scored.map { it.first }, authToken).associateBy { it.id }
         return scored.mapNotNull { (movieId, score) ->
             movies[movieId]?.let { movie ->
                 RecommendedMovie(
@@ -121,10 +125,7 @@ class Neo4jJAlgorithmRecommendationService(
 
 
     private fun getSeedActivities(userId: String, count: Int): List<Activity> =
-        activityService
-            .getRecentActivities(userId)
-            .sortedByDescending { it.timestamp }
-            .take(count)
+        activityGraphRepository.getRecentActivities(userId, count)
 
     companion object {
         val AverageSimilarityStrategy = SimilarityAggregationStrategy { exps ->

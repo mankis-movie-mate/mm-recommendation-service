@@ -8,5 +8,6 @@ data class Movie(
     val title: String,
     val genres: List<String>,
     val releaseYear: Int,
-    val rating: Double? = null
+    val rating: Double? = null,
+    val posterUrl: String,
 )

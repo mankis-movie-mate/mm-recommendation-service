@@ -17,6 +17,7 @@ interface RecommendationService {
         userId: String,
         limit: Int = 5,
         seedCount: Int = 5,
-        detailed: Boolean = false
+        detailed: Boolean = false,
+        authToken: String
     ): Recommendation
 }
