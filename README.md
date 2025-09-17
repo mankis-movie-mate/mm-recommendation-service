@@ -11,11 +11,11 @@ Provides personalized movie recommendations based on user interactions.
 - Fully environment-variable-driven configuration.
 
 
-## 🧠 Recommendation Algorithm
+## 🧠 Recommendation algorithm
 
 This service uses **Neo4j Graph Data Science (GDS)** library to compute movie recommendations.
 
-### 📊 Graph Model
+### 📊 Graph model
 
 - **Nodes:**  
   - `User`  
